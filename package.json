@@ -1,0 +1,19 @@
+{
+    "name": "real-time-video-conferencing",
+    "version": "1.0.0",
+    "description": "A real-time video conferencing application using WebRTC",
+    "main": "server.js",
+    "scripts": {
+        "start": "node server.js"
+    },
+    "dependencies": {
+        "express": "^4.21.2",
+        "real-time-video-conferencing": "file:",
+        "socket.io": "^4.8.1",
+        "ws": "^8.15.0"
+    },
+    "type": "commonjs",
+    "keywords": [],
+    "author": "",
+    "license": "ISC"
+}
