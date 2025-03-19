@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebRTC Video Chat</title>
+    <link rel="stylesheet" href="main.css">
+</head>
+<body>
+    <h2>WebRTC Video Conference</h2>
+    
+    <div id="join-section">
+        <input type="text" id="room" placeholder="Enter Room ID">
+        <button onclick="joinRoom()" id="joinButton">Join Room</button>
+    </div>
+
+    <div id="videos">
+        <video id="localVideo" autoplay playsinline muted></video>
+        <!-- Remote videos will be added here dynamically -->
+    </div>
+
+    <div id="controls" style="display: none;">
+        <button onclick="toggleMic()" id="micButton">
+            <img src="icons/mic-on.png" id="micIcon" width="30" height="30" alt="Mic">
+        </button>
+        
+        <button onclick="toggleCamera()" id="cameraButton">
+            <img src="icons/camera-on.png" id="cameraIcon" width="30" height="30" alt="Camera">
+        </button>
+        
+        <button onclick="endCall()">
+            <img src="icons/end-call.png" width="40" height="40" alt="End Call">
+        </button>
+    </div>
+
+    <div id="chat" style="display: none;">
+        <div id="chatbox"></div>
+        <div id="inputArea">
+            <input type="text" id="messageInput" placeholder="Type a message">
+            <button onclick="sendMessage()" id="sendButton">
+                <img src="icons/send.png" width="20" height="20" alt="Send">
+            </button>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>
