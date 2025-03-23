@@ -1,13 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
+<<<<<<< HEAD
 <html lang="en">
+=======
+>>>>>>> parent of b679763 (final)
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WebRTC Video Chat</title>
+<<<<<<< HEAD
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WebRTC Video Chat</title>
+=======
+>>>>>>> parent of b679763 (final)
     <link rel="stylesheet" href="main.css">
 </head>
 <body>
@@ -16,16 +22,41 @@
     <div id="join-section">
         <input type="text" id="room" placeholder="Enter Room ID">
         <button onclick="joinRoom()" id="joinButton">Join Room</button>
+<<<<<<< HEAD
     <h2>WebRTC Video Conference</h2>
     
     <div id="join-section">
         <input type="text" id="room" placeholder="Enter Room ID">
         <button onclick="joinRoom()" id="joinButton">Join Room</button>
+=======
+>>>>>>> parent of b679763 (final)
     </div>
 
     <div id="videos">
         <video id="localVideo" autoplay playsinline muted></video>
         <!-- Remote videos will be added here dynamically -->
+<<<<<<< HEAD
+=======
+    </div>
+    <div class="video-container">
+        <video autoplay></video>
+        <div class="username"></div>
+    </div>
+    
+
+    <div id="controls" style="display: none;">
+        <button onclick="toggleMic()" id="micButton">
+            <img src="icons/mic-on.png" id="micIcon" width="30" height="30" alt="Mic">
+        </button>
+        
+        <button onclick="toggleCamera()" id="cameraButton">
+            <img src="icons/camera-on.png" id="cameraIcon" width="30" height="30" alt="Camera">
+        </button>
+        
+        <button onclick="endCall()">
+            <img src="icons/end-call.png" width="40" height="40" alt="End Call">
+        </button>
+>>>>>>> parent of b679763 (final)
     </div>
     <div class="video-container">
         <video autoplay></video>
@@ -40,6 +71,7 @@
     </div>
     
 
+<<<<<<< HEAD
     <div id="controls">
         <button id="micButton">
             <img src="icons/mic-on.png" id="micIcon" alt="Mic">
@@ -52,6 +84,16 @@
         <button id="leaveButton">
             <img src="icons/end-call.png" alt="End Call">
         </button>
+=======
+    <div id="chat" style="display: none;">
+        <div id="chatbox"></div>
+        <div id="inputArea">
+            <input type="text" id="messageInput" placeholder="Type a message">
+            <button onclick="sendMessage()" id="sendButton">
+                <img src="icons/send.png" width="20" height="20" alt="Send">
+            </button>
+        </div>
+>>>>>>> parent of b679763 (final)
     </div>
 
     <div id="chat" style="display: none;">
