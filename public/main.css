@@ -1,18 +1,23 @@
 body {
 	font-family: 'Arial', sans-serif;
 	margin: 0;
-	padding: 20px;
-	background-color: #f5f5f5;
+	padding: 0;
+	background-color: #121212; /* Dark background for a professional look */
+	color: white;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
+	justify-content: center;
+	height: 100vh;
 }
 
+/* Title */
 h2 {
-	color: #333;
+	color: #fff;
 	margin-bottom: 20px;
 }
 
+/* Join Section */
 #join-section {
 	margin-bottom: 20px;
 	display: flex;
@@ -21,106 +26,79 @@ h2 {
 
 #room {
 	padding: 10px;
-	border: 1px solid #ddd;
+	border: 1px solid #555;
 	border-radius: 4px;
 	font-size: 16px;
+	background-color: #1e1e1e;
+	color: white;
 }
 
 #joinButton {
 	padding: 10px 20px;
-	background-color: #4caf50;
+	background-color: #007bff;
 	color: white;
 	border: none;
 	border-radius: 4px;
 	cursor: pointer;
 	font-size: 16px;
+	transition: background 0.3s;
 }
 
 #joinButton:hover {
-	background-color: #45a049;
+	background-color: #0056b3;
 }
 
+/* Video Grid */
 #videos {
 	display: grid;
-	grid-template-columns: repeat(3,1fr);
-	gap: 10px;
-	margin-bottom: 20px;
-	width: calc(100% - 350px);
-	max-width: 1200px;
-	margin-right: 350px;
+	grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+	gap: 15px;
+	width: 90%;
+	max-width: 1000px;
+	justify-content: center;
+	margin-bottom: 100px; /* Space for controls */
 }
 
 video {
 	width: 100%;
 	height: 200px;
-	background-color: #000;
-	border-radius: 8px;
+	background-color: black;
+	border-radius: 10px;
 	object-fit: cover;
+	box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
+	border: 2px solid #007bff;
 }
 
-#controls {
-	display: flex;
-	gap: 15px;
-	margin-bottom: 20px;
-}
-
-button {
-	background-color: #f0f0f0;
-	border: none;
-	border-radius: 50%;
-	width: 50px;
-	height: 50px;
-	cursor: pointer;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-}
-
-button:hover {
-	background-color: #e0e0e0;
-}
-
-#micButton, #cameraButton {
-	background-color: #fff;
-	box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-}
-
-button:last-child {
-	background-color: #ff4d4d;
-}
-
-button:last-child:hover {
-	background-color: #ff3333;
-}
-
+/* Chat Box */
 #chat {
 	position: fixed;
 	right: 20px;
-	top: 20px;
-	width: 300px;
+	bottom: 20px;
+	width: 320px;
 	height: 400px;
-	margin-top: 0;
-	border: 1px solid #ddd;
 	border-radius: 8px;
 	overflow: hidden;
-	background-color: white;
+	background-color: #1e1e1e;
 	display: flex;
 	flex-direction: column;
-	box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+	border: 1px solid #007bff;
 }
 
 #chatbox {
 	flex: 1;
 	overflow-y: auto;
 	padding: 10px;
-	background-color: #f9f9f9;
+	background-color: #252525;
 	height: 300px;
+	color: white;
 }
 
 #inputArea {
 	display: flex;
-	border-top: 1px solid #ddd;
+	border-top: 1px solid #007bff;
 	padding: 10px;
+	background-color: #1e1e1e;
 }
 
 #messageInput {
@@ -128,23 +106,32 @@ button:last-child:hover {
 	padding: 10px;
 	border: none;
 	font-size: 16px;
+	background-color: #252525;
+	color: white;
 }
 
 #sendButton {
 	width: 40px;
 	height: 40px;
-	border-radius: 0;
-	background-color: #2196f3;
+	background-color: #007bff;
+	border: none;
+	border-radius: 5px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	transition: background 0.3s;
 }
 
 #sendButton:hover {
-	background-color: #0b7dda;
+	background-color: #0056b3;
 }
 
 #sendButton img {
 	filter: brightness(0) invert(1);
 }
 
+/* Message Bubbles */
 .message {
 	margin-bottom: 10px;
 	padding: 8px 12px;
@@ -154,13 +141,62 @@ button:last-child:hover {
 }
 
 .my-message {
-	background-color: #dcf8c6;
+	background-color: #007bff;
+	color: white;
 	margin-left: auto;
 	border-top-right-radius: 0;
 }
 
 .receiver-message {
-	background-color: #f1f0f0;
+	background-color: #555;
 	margin-right: auto;
 	border-top-left-radius: 0;
+}
+
+/* Fixed Controls at Bottom */
+#controls {
+	position: fixed;
+	bottom: 20px;
+	left: 50%;
+	transform: translateX(-50%);
+	display: flex;
+	gap: 20px;
+	padding: 10px;
+	background: rgba(30, 30, 30, 0.8);
+	border-radius: 50px;
+	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+button {
+	background-color: #333;
+	border: none;
+	border-radius: 50%;
+	width: 60px;
+	height: 60px;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: background 0.3s;
+}
+
+button:hover {
+	background-color: #444;
+}
+
+#micButton, #cameraButton {
+	background-color: #007bff;
+	box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+#micButton:hover, #cameraButton:hover {
+	background-color: #0056b3;
+}
+
+#leaveButton {
+	background-color: #ff4d4d;
+}
+
+#leaveButton:hover {
+	background-color: #ff3333;
 }
