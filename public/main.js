@@ -1,5 +1,10 @@
 // Global variables
-const socket = io();
+const socket = io({
+  transports: ["websocket", "polling"],
+  reconnection: true,
+  reconnectionAttempts: 5,
+  reconnectionDelay: 1000,
+});
 let localStream;
 let peerConnections = {}; // Store multiple peer connections
 let roomId;
@@ -40,6 +45,18 @@ async function joinRoom() {
   }
 
   try {
+    // Clean up existing connections and videos first
+    Object.keys(peerConnections).forEach((userId) => {
+      if (peerConnections[userId]) {
+        peerConnections[userId].close();
+        delete peerConnections[userId];
+      }
+      const oldVideo = document.getElementById(`remote-${userId}`);
+      if (oldVideo) {
+        oldVideo.remove();
+      }
+    });
+
     // Get local media stream
     localStream = await navigator.mediaDevices.getUserMedia({
       video: true,
@@ -70,6 +87,22 @@ function createPeerConnection(userId) {
   // Create new RTCPeerConnection
   const peerConnection = new RTCPeerConnection(iceServers);
 
+  // Add connection state monitoring
+  peerConnection.onconnectionstatechange = () => {
+    console.log(
+      `Connection state with ${userId}:`,
+      peerConnection.connectionState
+    );
+  };
+
+  // Add ICE connection state monitoring
+  peerConnection.oniceconnectionstatechange = () => {
+    console.log(
+      `ICE connection state with ${userId}:`,
+      peerConnection.iceConnectionState
+    );
+  };
+
   // Add local tracks to the connection
   localStream.getTracks().forEach((track) => {
     peerConnection.addTrack(track, localStream);
@@ -78,20 +111,33 @@ function createPeerConnection(userId) {
   // Handle ICE candidates
   peerConnection.onicecandidate = (event) => {
     if (event.candidate) {
+      console.log(`Sending ICE candidate to ${userId}`);
       socket.emit("ice-candidate", event.candidate, userId);
     }
   };
 
   // Handle incoming tracks (remote video/audio)
   peerConnection.ontrack = (event) => {
-    // Create a new video element for this peer
-    const remoteVideoElement = document.createElement("video");
-    remoteVideoElement.id = `remote-${userId}`;
-    remoteVideoElement.autoplay = true;
-    remoteVideoElement.playsInline = true;
+    console.log(`Received track from ${userId}`);
 
-    // Add to the videos container
-    document.getElementById("videos").appendChild(remoteVideoElement);
+    // Check if video element already exists
+    let remoteVideoElement = document.getElementById(`remote-${userId}`);
+
+    // Only create new video element if it doesn't exist
+    if (!remoteVideoElement) {
+      remoteVideoElement = document.createElement("video");
+      remoteVideoElement.id = `remote-${userId}`;
+      remoteVideoElement.autoplay = true;
+      remoteVideoElement.playsInline = true;
+      remoteVideoElement.style.width = "300px";
+      remoteVideoElement.style.margin = "10px";
+      remoteVideoElement.style.borderRadius = "8px";
+
+      // Add to the videos container
+      document.getElementById("videos").appendChild(remoteVideoElement);
+    }
+
+    // Set or update the stream
     remoteVideoElement.srcObject = event.streams[0];
   };
 
@@ -175,18 +221,19 @@ function displayMessage(data) {
 socket.on("user-connected", async (userId, userName) => {
   console.log(`User connected: ${userId} (${userName})`);
 
-  // Create peer connection for the new user
-  const peerConnection = createPeerConnection(userId);
-
   try {
+    // Create peer connection for the new user
+    const peerConnection = createPeerConnection(userId);
+
     // Create an offer
     const offer = await peerConnection.createOffer();
     await peerConnection.setLocalDescription(offer);
 
+    console.log(`Sending offer to ${userId}`);
     // Send the offer to the new user
     socket.emit("offer", offer, userId);
   } catch (error) {
-    console.error("Error creating offer:", error);
+    console.error("Error in user-connected handler:", error);
   }
 });
 
@@ -203,13 +250,13 @@ socket.on("room-users", async (users) => {
 socket.on("offer", async (offer, senderId) => {
   console.log("Received offer from:", senderId);
 
-  // Get or create peer connection for this user
-  let peerConnection = peerConnections[senderId];
-  if (!peerConnection) {
-    peerConnection = createPeerConnection(senderId);
-  }
-
   try {
+    // Get or create peer connection for this user
+    let peerConnection = peerConnections[senderId];
+    if (!peerConnection) {
+      peerConnection = createPeerConnection(senderId);
+    }
+
     // Set the remote description (their offer)
     await peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
 
@@ -217,6 +264,7 @@ socket.on("offer", async (offer, senderId) => {
     const answer = await peerConnection.createAnswer();
     await peerConnection.setLocalDescription(answer);
 
+    console.log(`Sending answer to ${senderId}`);
     // Send the answer back
     socket.emit("answer", answer, senderId);
   } catch (error) {
@@ -252,8 +300,8 @@ socket.on("ice-candidate", async (candidate, senderId) => {
   }
 });
 
-socket.on("user-disconnected", (userId) => {
-  console.log("User disconnected:", userId);
+socket.on("user-disconnected", (userId, userName) => {
+  console.log(`User ${userName} (${userId}) disconnected`);
 
   // Close the peer connection
   if (peerConnections[userId]) {
@@ -266,6 +314,13 @@ socket.on("user-disconnected", (userId) => {
   if (remoteVideo) {
     remoteVideo.remove();
   }
+
+  // Display a message in the chat that the user has left
+  const messageDiv = document.createElement("div");
+  messageDiv.classList.add("message", "system-message");
+  messageDiv.textContent = `${userName} has left the room`;
+  chatbox.appendChild(messageDiv);
+  chatbox.scrollTop = chatbox.scrollHeight;
 });
 
 socket.on("receive-message", (data) => {
