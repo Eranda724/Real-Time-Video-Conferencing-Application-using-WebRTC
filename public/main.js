@@ -9,7 +9,6 @@ let localStream;
 let peerConnections = {}; // Store multiple peer connections
 let roomId;
 let username;
-let peerUsernames = {};
 
 // DOM Elements
 const localVideo = document.getElementById("localVideo");
@@ -67,22 +66,6 @@ async function joinRoom() {
     // Display local video
     localVideo.srcObject = localStream;
 
-    // Create container for local video if not exists
-    let localVideoContainer = document.getElementById("local-video-container");
-    if (!localVideoContainer) {
-      localVideoContainer = document.createElement("div");
-      localVideoContainer.id = "local-video-container";
-      localVideoContainer.className = "video-container";
-      localVideo.parentNode.insertBefore(localVideoContainer, localVideo);
-      localVideoContainer.appendChild(localVideo);
-
-      // Add username label for local video
-      const localUsernameLabel = document.createElement("div");
-      localUsernameLabel.className = "username-label";
-      localUsernameLabel.textContent = username + " (You)";
-      localVideoContainer.appendChild(localUsernameLabel);
-    }
-
     // Join the room
     socket.emit("join-room", roomId, username);
 
@@ -137,36 +120,24 @@ function createPeerConnection(userId) {
   peerConnection.ontrack = (event) => {
     console.log(`Received track from ${userId}`);
 
-    // Remove any existing container for this user first
-    const existingContainer = document.getElementById(`container-${userId}`);
-    if (existingContainer) {
-      existingContainer.remove();
+    // Check if video element already exists
+    let remoteVideoElement = document.getElementById(`remote-${userId}`);
+
+    // Only create new video element if it doesn't exist
+    if (!remoteVideoElement) {
+      remoteVideoElement = document.createElement("video");
+      remoteVideoElement.id = `remote-${userId}`;
+      remoteVideoElement.autoplay = true;
+      remoteVideoElement.playsInline = true;
+      remoteVideoElement.style.width = "300px";
+      remoteVideoElement.style.margin = "10px";
+      remoteVideoElement.style.borderRadius = "8px";
+
+      // Add to the videos container
+      document.getElementById("videos").appendChild(remoteVideoElement);
     }
 
-    // Create new video container
-    const videoContainer = document.createElement("div");
-    videoContainer.id = `container-${userId}`;
-    videoContainer.className = "video-container";
-
-    // Create video element
-    const remoteVideoElement = document.createElement("video");
-    remoteVideoElement.id = `remote-${userId}`;
-    remoteVideoElement.autoplay = true;
-    remoteVideoElement.playsInline = true;
-
-    // Add video to container
-    videoContainer.appendChild(remoteVideoElement);
-
-    // Add username label
-    const usernameLabel = document.createElement("div");
-    usernameLabel.className = "username-label";
-    usernameLabel.textContent = peerUsernames[userId] || "User";
-    videoContainer.appendChild(usernameLabel);
-
-    // Add container to videos grid
-    document.getElementById("videos").appendChild(videoContainer);
-
-    // Set the stream
+    // Set or update the stream
     remoteVideoElement.srcObject = event.streams[0];
   };
 
@@ -249,10 +220,12 @@ function displayMessage(data) {
 // Socket event handlers
 socket.on("user-connected", async (userId, userName) => {
   console.log(`User connected: ${userId} (${userName})`);
-  peerUsernames[userId] = userName; // Store the username
 
   try {
+    // Create peer connection for the new user
     const peerConnection = createPeerConnection(userId);
+
+    // Create an offer
     const offer = await peerConnection.createOffer();
     await peerConnection.setLocalDescription(offer);
 
