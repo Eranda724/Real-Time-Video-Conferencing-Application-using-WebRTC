@@ -1,49 +1,51 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>WebRTC Video Conference</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebRTC Video Chat</title>
     <link rel="stylesheet" href="main.css">
 </head>
 <body>
-    <!-- Header Container -->
-    <div class="header-container">
-        <h2>WebRTC Video Conference</h2>
-        <div id="join-section">
-            <input type="text" id="room" placeholder="Enter Room ID">
-            <button id="joinButton">Join Room</button>
-        </div>
+    <h2>WebRTC Video Conference</h2>
+    
+    <div id="join-section">
+        <input type="text" id="room" placeholder="Enter Room ID">
+        <button onclick="joinRoom()" id="joinButton">Join Room</button>
     </div>
 
-    <!-- Main Content -->
-    <div class="main-content">
-        <!-- Video Grid -->
-        <div id="videos">
-            <video id="localVideo" autoplay playsinline></video>
-        </div>
-
-        <!-- Chat Box -->
-        <div id="chat">
-            <div id="chatbox"></div>
-            <div id="inputArea">
-                <input type="text" id="messageInput" placeholder="Type a message">
-                <button id="sendButton">
-                    <img src="icons/send.png" alt="Send">
-                </button>
-            </div>
-        </div>
+    <div id="videos">
+        <video id="localVideo" autoplay playsinline muted></video>
+        <!-- Remote videos will be added here dynamically -->
     </div>
+    <div class="video-container">
+        <video autoplay></video>
+        <div class="username"></div>
+    </div>
+    
 
-    <!-- Controls -->
     <div id="controls">
         <button id="micButton">
-            <img src="icons/mic-on.png" alt="Mic" id="micIcon">
+            <img src="icons/mic-on.png" id="micIcon" alt="Mic">
         </button>
+        
         <button id="cameraButton">
-            <img src="icons/camera-on.png" alt="Camera" id="cameraIcon">
+            <img src="icons/camera-on.png" id="cameraIcon" alt="Camera">
         </button>
+        
         <button id="leaveButton">
-            <img src="icons/leave.png" alt="Leave">
+            <img src="icons/end-call.png" alt="End Call">
         </button>
+    </div>
+
+    <div id="chat" style="display: none;">
+        <div id="chatbox"></div>
+        <div id="inputArea">
+            <input type="text" id="messageInput" placeholder="Type a message">
+            <button onclick="sendMessage()" id="sendButton">
+                <img src="icons/send.png" width="20" height="20" alt="Send">
+            </button>
+        </div>
     </div>
 
     <script src="/socket.io/socket.io.js"></script>
