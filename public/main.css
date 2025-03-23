@@ -168,13 +168,20 @@ video:hover {
 	background-color: #333;
 	border: none;
 	border-radius: 50%;
-	width: 50px;
-	height: 50px;
+	width: 45px;
+	height: 45px;
 	cursor: pointer;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	transition: all 0.3s ease;
+	padding: 10px;
+}
+
+#controls button img {
+	width: 20px;
+	height: 20px;
+	object-fit: contain;
 }
 
 #controls button:hover {
@@ -234,14 +241,18 @@ video:hover {
 	justify-content: center;
 	cursor: pointer;
 	transition: background 0.3s;
+	padding: 8px;
+}
+
+#sendButton img {
+	width: 18px;
+	height: 18px;
+	object-fit: contain;
+	filter: brightness(0) invert(1);
 }
 
 #sendButton:hover {
 	background-color: #0056b3;
-}
-
-#sendButton img {
-	filter: brightness(0) invert(1);
 }
 
 /* Message Bubbles */
