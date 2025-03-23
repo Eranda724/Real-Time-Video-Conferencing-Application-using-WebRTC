@@ -5,6 +5,7 @@ body {
 	background-color: #121212; /* Dark background for a professional look */
 	color: white;
 <<<<<<< HEAD
+<<<<<<< HEAD
 	min-height: 100vh;
 	overflow-x: hidden;
 }
@@ -20,11 +21,16 @@ body {
 	padding: 20px;
 	z-index: 1000;
 =======
+=======
+>>>>>>> parent of b679763 (final)
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
 	height: 100vh;
+<<<<<<< HEAD
+>>>>>>> parent of b679763 (final)
+=======
 >>>>>>> parent of b679763 (final)
 }
 
@@ -103,6 +109,7 @@ video {
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 /* Fixed Controls at Bottom */
 #controls {
 	position: fixed;
@@ -161,6 +168,8 @@ video {
 }
 
 /* Make chat messages area larger */
+=======
+>>>>>>> parent of b679763 (final)
 =======
 >>>>>>> parent of b679763 (final)
 #chatbox {
