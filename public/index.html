@@ -25,16 +25,17 @@
     
 
     <div id="controls" style="display: none;">
-        <button onclick="toggleMic()" id="micButton">
-            <img src="icons/mic-on.png" id="micIcon" width="30" height="30" alt="Mic">
+        <button id="micButton" onclick="toggleMic()">
+            <img id="micIcon" src="icons/mic-on.png" alt="Microphone">
         </button>
-        
-        <button onclick="toggleCamera()" id="cameraButton">
-            <img src="icons/camera-on.png" id="cameraIcon" width="30" height="30" alt="Camera">
+        <button id="cameraButton" onclick="toggleCamera()">
+            <img id="cameraIcon" src="icons/camera-on.png" alt="Camera">
         </button>
-        
-        <button onclick="endCall()">
-            <img src="icons/call.png" width="40" height="40" alt="End Call">
+        <button id="screenShareButton" onclick="toggleScreenShare()">
+            <img id="screenShareIcon" src="icons/ss.png" alt="Screen Share">
+        </button>
+        <button id="leaveButton" onclick="endCall()">
+            <img src="icons/call.png" alt="Leave">
         </button>
     </div>
 

@@ -6,10 +6,12 @@ const socket = io({
   reconnectionDelay: 1000,
 });
 let localStream;
+let screenStream = null; // For screen sharing
 let peerConnections = {}; // Store multiple peer connections
 let roomId;
 let username;
 let peerUsernames = {};
+let isScreenSharing = false;
 
 // DOM Elements
 const localVideo = document.getElementById("localVideo");
@@ -20,6 +22,8 @@ const micButton = document.getElementById("micButton");
 const micIcon = document.getElementById("micIcon");
 const cameraButton = document.getElementById("cameraButton");
 const cameraIcon = document.getElementById("cameraIcon");
+const screenShareButton = document.getElementById("screenShareButton");
+const screenShareIcon = document.getElementById("screenShareIcon");
 const chatbox = document.getElementById("chatbox");
 const messageInput = document.getElementById("messageInput");
 const sendButton = document.getElementById("sendButton");
@@ -83,6 +87,11 @@ async function joinRoom() {
       localVideoContainer.appendChild(localUsernameLabel);
     }
 
+    // Add click handler to local video container
+    if (localVideoContainer) {
+      localVideoContainer.onclick = handleVideoClick;
+    }
+
     // Join the room
     socket.emit("join-room", roomId, username);
 
@@ -101,6 +110,11 @@ async function joinRoom() {
 
 // Create a peer connection for a new user
 function createPeerConnection(userId) {
+  if (peerConnections[userId]) {
+    console.log(`Peer connection already exists for ${userId}`);
+    return peerConnections[userId];
+  }
+
   // Create new RTCPeerConnection
   const peerConnection = new RTCPeerConnection(iceServers);
 
@@ -137,37 +151,13 @@ function createPeerConnection(userId) {
   peerConnection.ontrack = (event) => {
     console.log(`Received track from ${userId}`);
 
-    // Remove any existing container for this user first
+    // Remove existing video container if it exists
     const existingContainer = document.getElementById(`container-${userId}`);
     if (existingContainer) {
       existingContainer.remove();
     }
 
-    // Create new video container
-    const videoContainer = document.createElement("div");
-    videoContainer.id = `container-${userId}`;
-    videoContainer.className = "video-container";
-
-    // Create video element
-    const remoteVideoElement = document.createElement("video");
-    remoteVideoElement.id = `remote-${userId}`;
-    remoteVideoElement.autoplay = true;
-    remoteVideoElement.playsInline = true;
-
-    // Add video to container
-    videoContainer.appendChild(remoteVideoElement);
-
-    // Add username label
-    const usernameLabel = document.createElement("div");
-    usernameLabel.className = "username-label";
-    usernameLabel.textContent = peerUsernames[userId] || "User";
-    videoContainer.appendChild(usernameLabel);
-
-    // Add container to videos grid
-    document.getElementById("videos").appendChild(videoContainer);
-
-    // Set the stream
-    remoteVideoElement.srcObject = event.streams[0];
+    createVideoContainer(userId, event.streams[0]);
   };
 
   // Store the connection
@@ -199,8 +189,76 @@ function toggleCamera() {
   }
 }
 
+// Toggle screen sharing
+async function toggleScreenShare() {
+  try {
+    if (!isScreenSharing) {
+      // Start screen sharing
+      screenStream = await navigator.mediaDevices.getDisplayMedia({
+        video: true,
+        audio: true,
+      });
+
+      // Replace video track in all peer connections
+      const videoTrack = screenStream.getVideoTracks()[0];
+      Object.values(peerConnections).forEach((connection) => {
+        const sender = connection
+          .getSenders()
+          .find((s) => s.track.kind === "video");
+        if (sender) {
+          sender.replaceTrack(videoTrack);
+        }
+      });
+
+      // Update UI
+      screenShareIcon.src = "icons/screen-share-on.png";
+      isScreenSharing = true;
+
+      // Handle screen share stop
+      videoTrack.onended = () => {
+        stopScreenSharing();
+      };
+    } else {
+      stopScreenSharing();
+    }
+  } catch (error) {
+    console.error("Error toggling screen share:", error);
+    alert("Failed to start screen sharing. Please try again.");
+  }
+}
+
+// Stop screen sharing
+function stopScreenSharing() {
+  if (screenStream) {
+    screenStream.getTracks().forEach((track) => track.stop());
+    screenStream = null;
+  }
+
+  // Restore camera video track in all peer connections
+  if (localStream) {
+    const videoTrack = localStream.getVideoTracks()[0];
+    Object.values(peerConnections).forEach((connection) => {
+      const sender = connection
+        .getSenders()
+        .find((s) => s.track.kind === "video");
+      if (sender) {
+        sender.replaceTrack(videoTrack);
+      }
+    });
+  }
+
+  // Update UI
+  screenShareIcon.src = "icons/screen-share-off.png";
+  isScreenSharing = false;
+}
+
 // End the call
 function endCall() {
+  // Stop screen sharing if active
+  if (isScreenSharing) {
+    stopScreenSharing();
+  }
+
   // Close all peer connections
   Object.values(peerConnections).forEach((connection) => {
     connection.close();
@@ -246,10 +304,86 @@ function displayMessage(data) {
   chatbox.scrollTop = chatbox.scrollHeight;
 }
 
+// Handle video container clicks for enlarging/shrinking
+function handleVideoClick(event) {
+  const clickedContainer = event.target.closest(".video-container");
+  if (!clickedContainer) return;
+
+  const videosContainer = document.getElementById("videos");
+  const allContainers = document.querySelectorAll(".video-container");
+
+  // If clicking an already enlarged container, shrink it
+  if (clickedContainer.classList.contains("enlarged")) {
+    clickedContainer.classList.remove("enlarged");
+    videosContainer.classList.remove("has-enlarged");
+    allContainers.forEach((container) => {
+      container.style.transition = "all 0.3s ease";
+      container.classList.remove("small");
+    });
+  } else {
+    // First, ensure smooth transition
+    allContainers.forEach((container) => {
+      container.style.transition = "all 0.3s ease";
+    });
+
+    // Remove enlarged class from any other container
+    allContainers.forEach((container) => {
+      container.classList.remove("enlarged");
+    });
+
+    // Enlarge the clicked container
+    clickedContainer.classList.add("enlarged");
+    videosContainer.classList.add("has-enlarged");
+
+    // Ensure the enlarged video is first in the container
+    if (clickedContainer.parentNode.firstChild !== clickedContainer) {
+      videosContainer.insertBefore(
+        clickedContainer,
+        videosContainer.firstChild
+      );
+    }
+  }
+}
+
+// Modify the function that creates video elements to add click handlers
+function createVideoContainer(userId, stream) {
+  // Check for existing container
+  let videoContainer = document.getElementById(`container-${userId}`);
+
+  if (!videoContainer) {
+    videoContainer = document.createElement("div");
+    videoContainer.id = `container-${userId}`;
+    videoContainer.className = "video-container";
+    videoContainer.onclick = handleVideoClick;
+
+    const videoElement = document.createElement("video");
+    videoElement.id = `remote-${userId}`;
+    videoElement.autoplay = true;
+    videoElement.playsInline = true;
+
+    videoContainer.appendChild(videoElement);
+
+    const usernameLabel = document.createElement("div");
+    usernameLabel.className = "username-label";
+    usernameLabel.textContent = peerUsernames[userId] || "User";
+    videoContainer.appendChild(usernameLabel);
+
+    document.getElementById("videos").appendChild(videoContainer);
+  }
+
+  // Update the video stream
+  const videoElement = videoContainer.querySelector("video");
+  if (videoElement && videoElement.srcObject !== stream) {
+    videoElement.srcObject = stream;
+  }
+
+  return videoContainer;
+}
+
 // Socket event handlers
 socket.on("user-connected", async (userId, userName) => {
   console.log(`User connected: ${userId} (${userName})`);
-  peerUsernames[userId] = userName; // Store the username
+  peerUsernames[userId] = userName;
 
   try {
     const peerConnection = createPeerConnection(userId);
@@ -257,7 +391,6 @@ socket.on("user-connected", async (userId, userName) => {
     await peerConnection.setLocalDescription(offer);
 
     console.log(`Sending offer to ${userId}`);
-    // Send the offer to the new user
     socket.emit("offer", offer, userId);
   } catch (error) {
     console.error("Error in user-connected handler:", error);
