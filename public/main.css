@@ -166,13 +166,12 @@ video {
 	top: 0;
 	bottom: 20px;
 	width: 320px;
-	border-radius: 12px;
+	border-radius: 20px;
 	overflow: hidden;
-	background-color: #1e1e1e;
+	background: linear-gradient(180deg, #6b2fbc 0%, #5727aa 100%);
 	display: flex;
 	flex-direction: column;
-	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-	border: 1px solid rgba(255, 255, 255, 0.1);
+	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
 	margin-top: 20px;
 	z-index: 9999;
 }
@@ -227,8 +226,28 @@ video {
 	background-color: #af2929;
 }
 
+#recordButton {
+	background-color: #c61028;
+}
+
+#recordButton:hover {
+	background-color: #af2929;
+}
+
+#recordButton.active {
+	background-color: #dc3545;
+	animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+	0% { transform: scale(1); }
+	50% { transform: scale(1.05); }
+	100% { transform: scale(1); }
+}
+
 #screenShareButton.active {
 	background-color: #28a745;
+	animation: pulse 1.5s infinite;
 }
 
 #screenShareButton.active:hover {
@@ -243,43 +262,26 @@ video {
 	background-color: #c82333;
 }
 
-/* Make chat messages area larger */
+/* Chat messages area */
 #chatbox {
 	flex: 1;
 	overflow-y: auto;
 	padding: 20px;
-	background-color: #1e1e1e;
-	color: #fff;
+	background: linear-gradient(180deg, #ffffff 0%, #f8f9fa 100%);
+	color: #1a1a1a;
 	display: flex;
 	flex-direction: column;
-	gap: 10px;
-}
-
-#chatbox::-webkit-scrollbar {
-	width: 6px;
-}
-
-#chatbox::-webkit-scrollbar-track {
-	background: #2d2d2d;
-	border-radius: 3px;
-}
-
-#chatbox::-webkit-scrollbar-thumb {
-	background: #444;
-	border-radius: 3px;
-}
-
-#chatbox::-webkit-scrollbar-thumb:hover {
-	background: #555;
+	gap: 12px;
 }
 
 /* Message Bubbles */
 .message {
-	max-width: 80%;
-	margin-bottom: 12px;
+	max-width: 85%;
+	margin-bottom: 8px;
 	animation: fadeIn 0.3s ease;
 	display: flex;
 	flex-direction: column;
+	position: relative;
 }
 
 @keyframes fadeIn {
@@ -292,27 +294,25 @@ video {
 }
 
 .my-message .message-content {
-	background: linear-gradient(135deg, #0062cc, #0084ff);
+	background: #0084ff;
 	color: white;
-	border-radius: 18px 18px 4px 18px;
+	border-radius: 18px;
 	padding: 12px 16px;
 	margin: 2px 0;
-	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 	position: relative;
 	word-wrap: break-word;
 	font-size: 14px;
 	line-height: 1.4;
+	font-weight: 400;
+	letter-spacing: 0.2px;
+	transition: all 0.2s ease;
 }
 
-.my-message .message-content::before {
-	content: '';
-	position: absolute;
-	bottom: 0;
-	right: -6px;
-	width: 12px;
-	height: 12px;
-	background: #0084ff;
-	border-bottom-left-radius: 12px;
+.my-message .message-content:hover {
+	background: #0078e8;
+	transform: translateY(-1px);
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 .receiver-message {
@@ -320,32 +320,30 @@ video {
 }
 
 .receiver-message .message-content {
-	background: linear-gradient(135deg, #2d2d2d, #383838);
-	color: #fff;
-	border-radius: 18px 18px 18px 4px;
+	background: #f0f0f0;
+	color: #1a1a1a;
+	border-radius: 18px;
 	padding: 12px 16px;
 	margin: 2px 0;
-	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 	position: relative;
 	word-wrap: break-word;
 	font-size: 14px;
 	line-height: 1.4;
+	font-weight: 400;
+	letter-spacing: 0.2px;
+	transition: all 0.2s ease;
 }
 
-.receiver-message .message-content::before {
-	content: '';
-	position: absolute;
-	bottom: 0;
-	left: -6px;
-	width: 12px;
-	height: 12px;
-	background: #383838;
-	border-bottom-right-radius: 12px;
+.receiver-message .message-content:hover {
+	background: #e8e8e8;
+	transform: translateY(-1px);
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .message-sender {
-	font-size: 12px;
-	color: #888;
+	font-size: 13px;
+	color: #666;
 	margin-bottom: 4px;
 	padding: 0 8px;
 	font-weight: 500;
@@ -359,22 +357,17 @@ video {
 	align-self: flex-end;
 }
 
-.my-message .message-time {
-	color: rgba(255, 255, 255, 0.7);
-}
-
 .system-message {
 	align-self: center;
-	background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
-	color: #888;
+	background: rgba(0, 0, 0, 0.06);
+	color: #666;
 	padding: 8px 16px;
-	border-radius: 15px;
+	border-radius: 20px;
 	font-size: 12px;
 	margin: 16px 0;
 	max-width: 90%;
 	text-align: center;
-	backdrop-filter: blur(5px);
-	border: 1px solid rgba(255, 255, 255, 0.1);
+	border: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 /* Message status indicators */
@@ -432,15 +425,16 @@ video {
 	100% { transform: translateY(-50%) scale(0.95); opacity: 1; }
 }
 
+/* Input Area */
 #inputArea {
 	position: relative;
 	bottom: 0;
 	width: 100%;
 	display: flex;
-	padding: 12px;
-	background-color: #2d2d2d;
-	border-top: 1px solid rgba(255, 255, 255, 0.1);
-	gap: 8px;
+	padding: 16px;
+	background: #ffffff;
+	border-top: 1px solid rgba(0, 0, 0, 0.08);
+	gap: 12px;
 	align-items: center;
 	z-index: 10000;
 	box-sizing: border-box;
@@ -448,32 +442,34 @@ video {
 
 #messageInput {
 	flex: 1;
-	padding: 8px 16px;
-	border: none;
-	border-radius: 20px;
+	padding: 12px 20px;
+	border: 1px solid rgba(0, 0, 0, 0.1);
+	border-radius: 24px;
 	font-size: 14px;
-	background-color: #383838;
-	color: #fff;
+	background-color: #f8f9fa;
+	color: #1a1a1a;
 	transition: all 0.3s ease;
-	min-height: 36px;
+	min-height: 24px;
+	letter-spacing: 0.3px;
 }
 
 #messageInput:focus {
 	outline: none;
-	background-color: #404040;
-	box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+	background-color: #ffffff;
+	border-color: #0084ff;
+	box-shadow: 0 0 0 2px rgba(0, 132, 255, 0.2);
 }
 
 #messageInput::placeholder {
-	color: #888;
+	color: #999;
 }
 
 #sendButton {
-	min-width: 36px;
-	min-height: 36px;
-	width: 36px;
-	height: 36px;
-	background-color: #007bff;
+	min-width: 40px;
+	min-height: 40px;
+	width: 40px;
+	height: 40px;
+	background: #0084ff;
 	border: none;
 	border-radius: 50%;
 	display: flex;
@@ -483,11 +479,13 @@ video {
 	transition: all 0.3s ease;
 	padding: 0;
 	flex-shrink: 0;
+	box-shadow: 0 2px 4px rgba(0, 132, 255, 0.2);
 }
 
 #sendButton:hover {
-	background-color: #0056b3;
 	transform: scale(1.05);
+	background: #0078e8;
+	box-shadow: 0 4px 8px rgba(0, 132, 255, 0.3);
 }
 
 #sendButton:active {
@@ -495,7 +493,49 @@ video {
 }
 
 #sendButton img {
-	width: 18px;
-	height: 18px;
+	width: 20px;
+	height: 20px;
 	filter: brightness(0) invert(1);
+}
+
+/* Scrollbar styling */
+#chatbox::-webkit-scrollbar {
+	width: 6px;
+}
+
+#chatbox::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+#chatbox::-webkit-scrollbar-thumb {
+	background: rgba(0, 0, 0, 0.1);
+	border-radius: 3px;
+	transition: all 0.3s ease;
+}
+
+#chatbox::-webkit-scrollbar-thumb:hover {
+	background: rgba(0, 0, 0, 0.2);
+}
+
+/* Quick Reply Buttons */
+.quick-reply-buttons {
+	display: flex;
+	gap: 8px;
+	margin-top: 8px;
+}
+
+.quick-reply-button {
+	background: #f0f0f0;
+	border: none;
+	border-radius: 18px;
+	padding: 8px 16px;
+	font-size: 13px;
+	color: #1a1a1a;
+	cursor: pointer;
+	transition: all 0.2s ease;
+}
+
+.quick-reply-button:hover {
+	background: #e8e8e8;
+	transform: translateY(-1px);
 }

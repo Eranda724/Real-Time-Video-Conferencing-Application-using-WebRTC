@@ -12,6 +12,9 @@ let roomId;
 let username;
 let peerUsernames = {};
 let isScreenSharing = false;
+let isRecording = false;
+let mediaRecorder = null;
+let recordedChunks = [];
 
 // DOM Elements
 const localVideo = document.getElementById("localVideo");
@@ -211,7 +214,7 @@ async function toggleScreenShare() {
       });
 
       // Update UI
-      screenShareIcon.src = "icons/screen-share-on.png";
+      document.getElementById("screenShareButton").classList.add("active");
       isScreenSharing = true;
 
       // Handle screen share stop
@@ -248,8 +251,87 @@ function stopScreenSharing() {
   }
 
   // Update UI
-  screenShareIcon.src = "icons/screen-share-off.png";
+  document.getElementById("screenShareButton").classList.remove("active");
   isScreenSharing = false;
+}
+
+// Toggle screen recording
+async function toggleRecording() {
+  try {
+    if (!isRecording) {
+      // Start recording
+      const stream = isScreenSharing ? screenStream : localStream;
+      if (!stream) {
+        alert("Please start your camera or screen share first!");
+        return;
+      }
+
+      // Create a new MediaStream with only video tracks
+      const videoStream = new MediaStream();
+      stream.getVideoTracks().forEach((track) => {
+        videoStream.addTrack(track);
+      });
+
+      // Try different MIME types until we find a supported one
+      const mimeTypes = ["video/webm", "video/mp4", "video/mpeg"];
+
+      let selectedMimeType = "";
+      for (const mimeType of mimeTypes) {
+        if (MediaRecorder.isTypeSupported(mimeType)) {
+          selectedMimeType = mimeType;
+          break;
+        }
+      }
+
+      if (!selectedMimeType) {
+        throw new Error("No supported MIME type found for recording");
+      }
+
+      mediaRecorder = new MediaRecorder(videoStream, {
+        mimeType: selectedMimeType,
+        videoBitsPerSecond: 2500000, // 2.5 Mbps
+      });
+
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          recordedChunks.push(event.data);
+        }
+      };
+
+      mediaRecorder.onstop = () => {
+        const fileExtension = selectedMimeType.includes("mp4") ? "mp4" : "webm";
+        const blob = new Blob(recordedChunks, { type: selectedMimeType });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.style.display = "none";
+        a.href = url;
+        a.download = `recording-${new Date().toISOString()}.${fileExtension}`;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => {
+          document.body.removeChild(a);
+          window.URL.revokeObjectURL(url);
+        }, 100);
+        recordedChunks = [];
+      };
+
+      mediaRecorder.start(1000); // Collect data every second
+      isRecording = true;
+      document.getElementById("recordIcon").src = "icons/record.png";
+      document.getElementById("recordButton").classList.add("active");
+    } else {
+      // Stop recording
+      if (mediaRecorder && mediaRecorder.state !== "inactive") {
+        mediaRecorder.stop();
+      }
+      isRecording = false;
+      document.getElementById("recordIcon").src = "icons/record.png";
+      document.getElementById("recordButton").classList.remove("active");
+    }
+  } catch (error) {
+    console.error("Error toggling recording:", error);
+    alert("Failed to start/stop recording. Please try again.");
+  }
 }
 
 // End the call
@@ -257,6 +339,11 @@ function endCall() {
   // Stop screen sharing if active
   if (isScreenSharing) {
     stopScreenSharing();
+  }
+
+  // Stop recording if active
+  if (isRecording) {
+    toggleRecording();
   }
 
   // Close all peer connections
