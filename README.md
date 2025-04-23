@@ -82,13 +82,6 @@ npm run dev
 - **CSS3**: For styling the app and ensuring a responsive design.
 - **JavaScript (ES6+)**: For app logic and real-time updates.
 
-## Browser Support
-
-- **Chrome** (Recommended)
-- **Firefox**
-- **Safari**
-- **Edge (Chromium-based)**
-
 ### Note:
 Make sure your browser supports WebRTC for optimal performance.
 
@@ -110,25 +103,6 @@ This application is hosted on Render. You can access the live demo at:
 
 - **No video/audio?** Ensure that you've granted the necessary permissions to use the microphone and camera in your browser.
 - **Room issues?** Make sure you're using a unique room ID. If a room already exists with that ID, you will be placed in it.
-
-## Contributing
-
-We welcome contributions! Please follow these steps to contribute:
-
-1. **Fork the repository**:
-   - Create a fork of the repository on GitHub.
-
-2. **Create a feature branch**:
-   - `git checkout -b feature/amazing-feature`
-
-3. **Commit your changes**:
-   - `git commit -m 'Add some amazing feature'`
-
-4. **Push to your branch**:
-   - `git push origin feature/amazing-feature`
-
-5. **Open a Pull Request**:
-   - Visit the repository and submit a pull request for review.
 
 ## License
 
