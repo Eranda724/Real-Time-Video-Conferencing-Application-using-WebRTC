@@ -2,25 +2,23 @@ body {
 	font-family: 'Arial', sans-serif;
 	margin: 0;
 	padding: 0;
-	background-color: #121212; /* Dark background for a professional look */
+	background-color: #121212;
 	color: white;
 	min-height: 100vh;
 	overflow-x: hidden;
 }
 
-/* Title */
 h2 {
 	color: #fff;
 	margin: 20px;
-	margin-right: 360px; /* Account for chat width */
+	margin-right: 360px;
 }
 
-/* Join Section */
 #join-section {
 	position: relative;
 	z-index: 1;
 	margin: 20px;
-	margin-right: 360px; /* Account for chat width */
+	margin-right: 360px;
 	display: flex;
 	gap: 10px;
 	align-items: center;
@@ -65,7 +63,6 @@ h2 {
 	transform: translateY(-1px);
 }
 
-/* Video Grid */
 #videos {
 	display: grid;
 	grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -93,7 +90,6 @@ h2 {
 	transition: all 0.3s ease;
 }
 
-/* Layout when a video is enlarged */
 #videos.has-enlarged {
 	display: flex;
 	flex-wrap: wrap;
@@ -101,7 +97,7 @@ h2 {
 	align-items: flex-start;
 	height: calc(100vh - 140px);
 	overflow-y: auto;
-	padding-bottom: 100px; /* Space for controls */
+	padding-bottom: 100px;
 }
 
 .video-container.enlarged {
@@ -119,7 +115,6 @@ h2 {
 	margin-bottom: 20px;
 }
 
-/* Video elements */
 video {
 	width: 100%;
 	height: 100%;
@@ -140,7 +135,6 @@ video {
 	z-index: 2;
 }
 
-/* Scrollbar for videos container */
 #videos::-webkit-scrollbar {
 	width: 6px;
 }
@@ -159,7 +153,6 @@ video {
 	background: #555;
 }
 
-/* Chat Box - Right side positioning */
 #chat {
 	position: fixed;
 	right: 20px;
@@ -176,7 +169,6 @@ video {
 	z-index: 9999;
 }
 
-/* Fixed Controls at Bottom */
 #controls {
 	position: fixed;
 	bottom: 20px;
@@ -193,7 +185,6 @@ video {
 	backdrop-filter: blur(10px);
 }
 
-/* Control Buttons */
 #controls button {
 	background-color: #d42a2a;
 	border: none;
@@ -262,7 +253,6 @@ video {
 	background-color: #c82333;
 }
 
-/* Chat messages area */
 #chatbox {
 	flex: 1;
 	overflow-y: auto;
@@ -274,7 +264,6 @@ video {
 	gap: 12px;
 }
 
-/* Message Bubbles */
 .message {
 	max-width: 85%;
 	margin-bottom: 8px;
@@ -370,7 +359,6 @@ video {
 	border: 1px solid rgba(0, 0, 0, 0.08);
 }
 
-/* Message status indicators */
 .message-status {
 	font-size: 11px;
 	margin-top: 2px;
@@ -378,7 +366,6 @@ video {
 	color: rgba(255, 255, 255, 0.5);
 }
 
-/* Link styling in messages */
 .message-content a {
 	color: #66b3ff;
 	text-decoration: none;
@@ -388,7 +375,6 @@ video {
 	text-decoration: underline;
 }
 
-/* Emoji sizing in messages */
 .message-content img.emoji {
 	height: 1.2em;
 	width: 1.2em;
@@ -396,12 +382,10 @@ video {
 	vertical-align: -0.2em;
 }
 
-/* Message hover effect */
 .message-content:hover {
 	filter: brightness(1.1);
 }
 
-/* Unread message indicator */
 .unread-message {
 	position: relative;
 }
@@ -425,7 +409,6 @@ video {
 	100% { transform: translateY(-50%) scale(0.95); opacity: 1; }
 }
 
-/* Input Area */
 #inputArea {
 	position: relative;
 	bottom: 0;
@@ -498,7 +481,6 @@ video {
 	filter: brightness(0) invert(1);
 }
 
-/* Scrollbar styling */
 #chatbox::-webkit-scrollbar {
 	width: 6px;
 }
@@ -517,7 +499,6 @@ video {
 	background: rgba(0, 0, 0, 0.2);
 }
 
-/* Quick Reply Buttons */
 .quick-reply-buttons {
 	display: flex;
 	gap: 8px;
