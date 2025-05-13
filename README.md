@@ -97,6 +97,7 @@ This application is hosted on Render. You can access the live demo at:
 
 [https://real-time-video-conferencing-application.onrender.com](https://real-time-video-conferencing-application.onrender.com)
 
+
 ## How It Works
 
 1. **WebRTC for Peer-to-Peer Video**: WebRTC (Web Real-Time Communication) allows direct peer-to-peer communication for video and audio without the need for an intermediary server.
